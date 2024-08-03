@@ -13,7 +13,6 @@ class TransactionReadSerializer(serializers.Serializer):
 
 
 class TransactionWriteSerializer(serializers.Serializer):
-    transaction_id = serializers.CharField()
     name = serializers.CharField()
     phone = serializers.CharField()
     email = serializers.EmailField()

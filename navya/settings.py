@@ -50,6 +50,12 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
 }
 
+AUTHENTICATION_BACKENDS = [
+    "navya.backends.EmailBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),

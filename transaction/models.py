@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from user.models import Employee
 
@@ -17,20 +19,21 @@ class Transaction(models.Model):
 
     transaction_id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(max_length=100, unique=True)
+    phone = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
     amount = models.FloatField()
     transaction_date = models.DateField()
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    updated_by = models.ForeignKey(
-        Employee, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions"
-    )
 
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            transaction_prefix = "TXNID"
-            self.transaction_id = transaction_prefix + self.id
+    def __str__(self):
+        return self.transaction_id
 
-        super().save(*args, **kwargs)
+
+@receiver(post_save, sender=Transaction)
+def save_transaction_id(sender, instance, **kwargs):
+    if kwargs.get("created"):
+        transaction_prefix = "TXNID"
+        instance.transaction_id = transaction_prefix + str(instance.pk)
+        instance.save()
