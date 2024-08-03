@@ -1,14 +1,20 @@
 from django.db import models
+
 from user.models import Employee
+
 
 # Create your models here.
 class Transaction(models.Model):
     class Meta:
-       indexes = [
-            models.Index(fields=['transaction_id',]),
+        indexes = [
+            models.Index(
+                fields=[
+                    "transaction_id",
+                ]
+            ),
         ]
-       ordering = ('-transaction_date',)
-       
+        ordering = ("-transaction_date",)
+
     transaction_id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=100, unique=True)
@@ -28,5 +34,3 @@ class Transaction(models.Model):
             self.transaction_id = transaction_prefix + self.id
 
         super().save(*args, **kwargs)
-
-

@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from .models import Transaction
+
 
 class TransactionReadSerializer(serializers.Serializer):
     transaction_id = serializers.CharField(read_only=True)
@@ -26,4 +28,3 @@ class TransactionWriteSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return Transaction.objects.create(**validated_data)
-    
