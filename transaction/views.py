@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from navya.paginations import BasePagination
+
 from .models import Transaction
 from .permissions import IsManager
 from .serializers import TransactionReadSerializer, TransactionWriteSerializer
@@ -11,6 +13,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionReadSerializer
     permission_classes = (IsAuthenticated,)
     lookup_field = "transaction_id"
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return Transaction.objects.all()
@@ -29,6 +32,11 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return CustomResponse(serializer.data)
 

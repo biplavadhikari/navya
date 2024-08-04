@@ -2,8 +2,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from user.models import Employee
-
 
 # Create your models here.
 class Transaction(models.Model):

@@ -10,21 +10,28 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from datetime import timedelta
 from pathlib import Path
+
+import environ
+
+env = environ.Env(DEBUG=(bool, False))
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure--lu09x2n(*+x+nphw(xai&8n4l1r^u&s1bd@=w0#1dmf_0v!cj"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -57,11 +64,13 @@ AUTHENTICATION_BACKENDS = [
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
-    "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
-    "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(days=1),
-    "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=env("ACCESS_TOKEN_LIFETIME_MINS", int)),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=env("SLIDING_TOKEN_REFRESH_LIFETIME_DAYS", int)),
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=env("SLIDING_TOKEN_LIFETIME_DAYS", int)),
+    "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(
+        days=env("SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS", int)
+    ),
+    "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(days=env("SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS", int)),
 }
 
 
@@ -102,11 +111,11 @@ WSGI_APPLICATION = "navya.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "navya_advisors",
-        "USER": "biplav",
-        "PASSWORD": "admin@123",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "NAME": env("DATABASE_NAME"),
+        "USER": env("DATABASE_USER"),
+        "PASSWORD": env("DATABASE_PASSWORD"),
+        "HOST": env("DATABASE_HOST"),
+        "PORT": env("DATABASE_PORT"),
     }
 }
 
